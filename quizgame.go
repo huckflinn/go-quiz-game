@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -42,5 +43,24 @@ func main() {
 		}
 
 		fmt.Println(row[0])
+
+		var res int16
+		fmt.Scanln(&res)
+
+		ans64, err := strconv.ParseInt(row[1], 10, 16)
+
+		if err != nil {
+			log.Fatal(err)
+			fmt.Println("Invalid response. Please enter a number.")
+			continue
+		}
+
+		ans := int16(ans64)
+
+		if res == ans {
+			numRight ++
+		}
+
+		solutions++
 	}
 }
