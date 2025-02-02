@@ -12,12 +12,26 @@ import (
 	"time"
 )
 
+func showScore(questions uint8, answers uint8) {
+	fmt.Printf("\nTotal Questions: %d\n", questions)
+	fmt.Printf("Correct Answers: %d\n", answers)
+	fmt.Println("Thanks for playing! Goodbye!")
+}
+
+
+
 func main() {
 	quiz := flag.String("quiz", "problems.csv", "The file for the quiz you wish to take.")
 
 	timeLimit := flag.Int("time-limit", 30, "The amount of time to take the quiz.")
 
 	flag.Parse()
+	
+	for {
+		fmt.Print("Press 'Enter' to begin:")
+		fmt.Scanln()
+		break
+	}
 
 	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
@@ -29,23 +43,23 @@ func main() {
 
 	r := csv.NewReader(strings.NewReader(string(f)))
 
-	var solutions uint8
+	var totalQuestions uint8
 
-	var numRight uint8
+	var totalCorrect uint8
 
 	go func() {
 		<-timer.C
-		fmt.Println("Time's up! Thanks for playing!")
+		fmt.Println("\nTime's up!")
+		showScore(totalQuestions, totalCorrect)
 		os.Exit(0)
 	} ()
+
 
 	for {
 		row, err := r.Read()
 
 		if err == io.EOF {
-			fmt.Printf("Total Questions: %d\n", solutions)
-			fmt.Printf("Correct Answers: %d\n", numRight)
-			fmt.Println("Thanks for playing! Goodbye!")
+			showScore(totalQuestions, totalCorrect)
 			break
 		}
 
@@ -69,10 +83,10 @@ func main() {
 		ans := int16(ans64)
 
 		if res == ans {
-			numRight ++
+			totalCorrect ++
 		}
 
-		solutions++
+		totalQuestions++
 	}
 
 	timer.Stop()
