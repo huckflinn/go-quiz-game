@@ -9,12 +9,17 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func main() {
 	quiz := flag.String("quiz", "problems.csv", "The file for the quiz you wish to take.")
 
+	timeLimit := flag.Int("time-limit", 30, "The amount of time to take the quiz.")
+
 	flag.Parse()
+
+	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
 	f, err := os.ReadFile(*quiz)
 
@@ -27,6 +32,12 @@ func main() {
 	var solutions uint8
 
 	var numRight uint8
+
+	go func() {
+		<-timer.C
+		fmt.Println("Time's up! Thanks for playing!")
+		os.Exit(0)
+	} ()
 
 	for {
 		row, err := r.Read()
@@ -63,4 +74,6 @@ func main() {
 
 		solutions++
 	}
+
+	timer.Stop()
 }
